@@ -33,8 +33,6 @@ data.forEach((row) => {
   // Loop through the row and create a td for each column
   columns.forEach((column) => {
     var td = document.createElement("td");
-    column = column.toLowerCase();
-    column = column.replace(/\s/g, "");
     td.textContent = row[column];
 
     tr.appendChild(td);
