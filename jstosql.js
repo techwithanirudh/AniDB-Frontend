@@ -1,4 +1,3 @@
-// Copyright (c) of Github Copilot.
 let htmlToSql = {
   string: "VARCHAR(255)",
   number: "INT",
