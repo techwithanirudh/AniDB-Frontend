@@ -10,7 +10,7 @@ document.head.appendChild(link);
 
 const database = "test";
 var name = "Test1";
-var columns = ["Data Id", "Base"];
+var columns = [];
 fetch(
   "https://anidd-backend.techwithanirudh.repl.co/api/v1/create/" + database,
   {
@@ -36,6 +36,8 @@ function main(data) {
   }
 
   nameEl.textContent = name;
+
+  columns = Object.keys(data[0]);
 
   columns.forEach((column) => {
     var th = document.createElement("th");
