@@ -286,7 +286,7 @@ function main(data) {
       column.parentNode.removeChild(column);
       bodyEls.forEach((row) => {
         // Remove the child before the buttons
-        row.removeChild(row.lastChild);
+        row.removeChild(row.querySelector(".buttons").previousSibling);
       });
       columns.pop();
       bodyEls = [...body.children];
