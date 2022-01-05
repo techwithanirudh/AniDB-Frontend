@@ -268,7 +268,7 @@ function main(data) {
     var editButton = document.createElement("button");
     editButton.className = "btn btn-primary";
     editButton.innerHTML = "<i class='fas fa-edit'></i>";
-	editButton.title = "Edit"
+	deleteButton.title = "Edit"
     editButton.onclick = function () {
       edit(column);
       //   Edit the column in the columns list
