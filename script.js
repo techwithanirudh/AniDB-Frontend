@@ -79,6 +79,7 @@ function main(data) {
       } else {
         row.removeAttribute("contenteditable");
       }
+      return;
     }
     for (var i = 0; i < row.cells.length; i++) {
       // If the cell is not the first one, make it editable
@@ -95,17 +96,28 @@ function main(data) {
   // Make a function to export the table to a dictionary
   function exportTableToDictionary(bodyEls, includes = false) {
     var table = {};
-    var count = 0
-    bodyEls.forEach((bodyEl) => {
-      var row = {};
-      count += 1
-      bodyEl.querySelectorAll("td").forEach((cell) => {
-        row[cell.textContent] = cell.textContent;
-      });
-      //   Get the columnName by doing columns in the table
-      columnName = columns[count - 1];
-      table[columnName] = row;
+    bodyEls.forEach((row) => {
+      var newRow = {};
+      //   Check if the row contains a data-id attribute
+      //   if (includes && !row.getAttribute("data-anidb-include") == "true") {
+      //     // Skip this row
+      //     return;
+      //   }
+      // Loop through all cells in the row
+      for (var j = 0; j < row.cells.length; j++) {
+        // Get the column name
+        var columnName = columns[j - 1];
+        if (j == 0) {
+          columnName = "id";
+        }
+        // Get the cell value
+        var cellValue = row.cells[j].textContent;
+        // Add the column name and value to the new row
+        newRow[columnName] = cellValue;
+      }
+      table[newRow.id] = newRow;
     });
+
     return table;
   }
 
@@ -122,7 +134,7 @@ function main(data) {
     var button = document.createElement("button");
     button.className = "btn btn-primary";
     button.innerHTML = "<i class='fas fa-edit'></i>";
-	button.title = 'Edit'
+    button.title = "Edit";
     button.onclick = function () {
       edit(row);
     };
@@ -133,7 +145,7 @@ function main(data) {
     var button = document.createElement("button");
     button.className = "btn btn-danger";
     button.innerHTML = "<i class='fas fa-trash-alt'></i>";
-	button.title = 'Delete'
+    button.title = "Delete";
     button.onclick = function () {
       row.parentNode.removeChild(row);
       bodyEls = [...body.children];
@@ -150,8 +162,6 @@ function main(data) {
     createEdit(buttons, row);
     createDelete(buttons, row);
 
-    // Dont take up much space
-    buttons.style.width = "34%";
     row.appendChild(buttons);
   });
 
@@ -187,8 +197,6 @@ function main(data) {
     createEdit(buttons, row);
     createDelete(buttons, row);
 
-    // Dont take up much space
-    buttons.style.width = "34%";
     row.appendChild(buttons);
 
     //   Edit body el list
@@ -260,6 +268,8 @@ function main(data) {
     bodyEls.forEach((row) => {
       var cell = document.createElement("td");
       cell.textContent = "New Column";
+      cell.scope = "row";
+      cell.id = "New Column";
       //   Insert the cell before the buttons
       row.insertBefore(cell, row.lastChild);
     });
@@ -268,25 +278,26 @@ function main(data) {
     var editButton = document.createElement("button");
     editButton.className = "btn btn-primary";
     editButton.innerHTML = "<i class='fas fa-edit'></i>";
-	editButton.title = "Edit"
+    editButton.title = "Edit";
     editButton.onclick = function () {
+      window.colName = column.textContent;
       edit(column);
       //   Edit the column in the columns list
-      columns[columns.at(-1)] = column.textContent;
+      columns[columns.indexOf(colName)] = column.cellIndex;
     };
     buttons.appendChild(editButton);
     // Add a delete button to the new column
     var deleteButton = document.createElement("button");
     deleteButton.className = "btn btn-danger";
     deleteButton.innerHTML = "<i class='fas fa-trash-alt'></i>";
-	deleteButton.title = "Delete"
+    deleteButton.title = "Delete";
     deleteButton.onclick = function () {
       column.parentNode.removeChild(column);
       bodyEls.forEach((row) => {
         // Remove the child before the buttons
-        row.removeChild(row.querySelector(".buttons").previousSibling);
+        row.removeChild(row.children[columns.indexOf(colName) + 1]);
       });
-      columns.pop();
+      columns.splice(columns.indexOf(colName), 1);
       bodyEls = [...body.children];
     };
     buttons.appendChild(deleteButton);
